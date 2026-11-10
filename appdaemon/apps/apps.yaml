@@ -1,0 +1,12 @@
+# Bild des Tages von Bing als Hintergrund fuer das iPad-Panel.
+# Laedt das Bild lokal nach www/ipad/bg_today.jpg, damit das Panel nicht bei
+# jedem Aufruf bing.com anfragt. Setzt zusaetzlich sensor.bing_wallpaper mit
+# Titel und Copyright fuer die Bildunterschrift.
+bing_wallpaper:
+  module: bing_wallpaper
+  class: BingWallpaper
+  markt: de-DE
+  aufloesung: 1920x1080
+  unterordner: ipad
+  dateiname: bg_today.jpg
+  laufzeit: "05:30:00"

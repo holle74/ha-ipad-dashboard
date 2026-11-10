@@ -1,0 +1,90 @@
+# Panel-Theme fuer das iPad-Dashboard.
+# Farbwelt: tiefes Marineblau-Schwarz, Bernstein als Akzent, Cyan/Gruen/Violett
+# als Sekundaerfarben. Angelehnt an das Referenz-Panel vom 2026-08-31.
+ipad_panel:
+  # --- Grundflaechen
+  primary-background-color: "#0a0e18"
+  secondary-background-color: "#0e1424"
+  divider-color: "rgba(255,255,255,0.07)"
+
+  # --- Karten
+  card-background-color: "#111827"
+  ha-card-background: "rgba(20,27,43,0.92)"
+  ha-card-border-radius: "18px"
+  ha-card-border-width: "1px"
+  ha-card-border-color: "rgba(255,255,255,0.07)"
+  ha-card-box-shadow: "0 2px 14px rgba(0,0,0,0.45)"
+
+  # --- Text
+  primary-text-color: "#e8eef7"
+  secondary-text-color: "#8a94a6"
+  text-primary-color: "#0a0e18"
+  disabled-text-color: "#4b5566"
+
+  # --- Akzente
+  primary-color: "#f5a623"
+  accent-color: "#22d3ee"
+  dark-primary-color: "#c07f10"
+  light-primary-color: "#ffc46b"
+
+  # --- Zustaende
+  state-icon-color: "#8a94a6"
+  state-icon-active-color: "#f5a623"
+  state-on-color: "#34d399"
+  state-off-color: "#4b5566"
+  paper-item-icon-active-color: "#f5a623"
+  paper-item-icon-color: "#8a94a6"
+
+  # --- Label-Badges / Farbpalette
+  label-badge-background-color: "#111827"
+  label-badge-text-color: "#e8eef7"
+  label-badge-red: "#f43f5e"
+  label-badge-green: "#34d399"
+  label-badge-blue: "#38bdf8"
+  label-badge-yellow: "#f5a623"
+  label-badge-grey: "#4b5566"
+
+  # --- Kopfzeile / Seitenleiste (falls ohne Kiosk genutzt)
+  app-header-background-color: "#0a0e18"
+  app-header-text-color: "#e8eef7"
+  app-header-edit-background-color: "#111827"
+  sidebar-background-color: "#0a0e18"
+  sidebar-text-color: "#8a94a6"
+  sidebar-selected-text-color: "#f5a623"
+  sidebar-selected-icon-color: "#f5a623"
+  sidebar-icon-color: "#6b7688"
+
+  # --- Bedienelemente
+  switch-checked-color: "#f5a623"
+  switch-unchecked-color: "#4b5566"
+  slider-color: "#f5a623"
+  slider-secondary-color: "rgba(245,166,35,0.28)"
+  slider-track-color: "rgba(255,255,255,0.10)"
+  input-fill-color: "#111827"
+  input-ink-color: "#e8eef7"
+  mdc-theme-primary: "#f5a623"
+
+  # --- Diagramme
+  graph-header-font-color: "#e8eef7"
+  chart-background-color: "transparent"
+
+  # --- HA-Farbtoken (Tiles, Badges, mushroom)
+  red-color: "#f43f5e"
+  pink-color: "#ec4899"
+  purple-color: "#a855f7"
+  deep-purple-color: "#8b5cf6"
+  indigo-color: "#6366f1"
+  blue-color: "#38bdf8"
+  light-blue-color: "#22d3ee"
+  cyan-color: "#22d3ee"
+  teal-color: "#2dd4bf"
+  green-color: "#34d399"
+  light-green-color: "#a3e635"
+  lime-color: "#d9f99d"
+  yellow-color: "#fde047"
+  amber-color: "#f5a623"
+  orange-color: "#fb923c"
+  deep-orange-color: "#f97316"
+  brown-color: "#a8785a"
+  grey-color: "#8a94a6"
+  blue-grey-color: "#64748b"

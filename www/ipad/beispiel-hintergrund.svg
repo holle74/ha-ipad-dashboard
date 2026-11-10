@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <!-- Neutraler Beispiel-Hintergrund (frei verwendbar). Ersatz fuer das Bing-Bild. -->
+  <defs>
+    <linearGradient id="himmel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2a44"/>
+      <stop offset="0.55" stop-color="#2c4a6b"/>
+      <stop offset="1" stop-color="#0e1a2b"/>
+    </linearGradient>
+    <radialGradient id="licht" cx="0.72" cy="0.28" r="0.55">
+      <stop offset="0" stop-color="#f3c77a" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="#d8895a" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#d8895a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#himmel)"/>
+  <rect width="1920" height="1080" fill="url(#licht)"/>
+  <path d="M0 760 C 320 680 560 720 860 650 S 1460 560 1920 640 L1920 1080 L0 1080 Z" fill="#14253a" opacity="0.85"/>
+  <path d="M0 860 C 400 800 700 840 1040 790 S 1600 740 1920 800 L1920 1080 L0 1080 Z" fill="#0c1726" opacity="0.95"/>
+</svg>

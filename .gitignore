@@ -1,0 +1,4 @@
+www/ipad/bg_today.jpg
+www/ipad/bilder/
+*.bak-*
+__pycache__/

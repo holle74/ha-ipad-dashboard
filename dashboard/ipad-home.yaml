@@ -1,0 +1,2585 @@
+# iPad-Dashboard (Vorlage) - im Dashboard ueber "Rohdaten-Konfigurationseditor" einfuegen.
+# Entity-IDs sind Beispiele und muessen an das eigene System angepasst werden.
+
+views:
+- title: Home
+  path: home
+  type: panel
+  icon: mdi:home
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+        - type: custom:ipad-rahmen
+          style: 'background: rgba(10,14,24,0.35); border: 1px solid rgba(255,255,255,0.10); border-radius: 18px; box-shadow: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding:
+            10px; max-width: 380px;'
+          card:
+            type: custom:trash-card
+            entities:
+            - calendar.abfallkalender
+            event_grouping: true
+            drop_todayevents_from: '10:00:00'
+            next_days: 7
+            filter_events: true
+            hide_time_range: true
+            day_style: counter
+            alignment_style: center
+            color_mode: icon
+            items_per_row: 2
+            refresh_rate: 60
+            with_label: true
+            layout: vertical
+            icon_size: 24
+            pattern:
+            - icon: mdi:flower
+              color: lime
+              type: organic
+              pattern: Bio
+            - icon: mdi:newspaper
+              color: light-blue
+              type: paper
+              pattern: Papier
+            - icon: mdi:recycle-variant
+              color: amber
+              type: recycle
+              pattern: Leicht
+            - icon: mdi:trash-can-outline
+              color: blue-grey
+              type: waste
+              pattern: Rest
+            card_mod:
+              style: 'ha-card { background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; } .name, .label, .primary, .secondary, span, div
+                { font-size: 12px !important; text-overflow: clip !important; overflow: visible !important; white-space: normal !important; }'
+        - type: custom:ipad-rahmen
+          style: 'background: rgba(10,14,24,0.35); border: 1px solid rgba(255,255,255,0.10); border-radius: 18px; box-shadow: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding:
+            10px; max-width: 360px;'
+          card:
+            type: custom:clock-weather-card
+            entity: weather.forecast_home
+            forecast_rows: 5
+            locale: de
+            hide_clock: true
+            hide_date: true
+            hide_today_section: false
+            hide_forecast_section: false
+            animated_icon: true
+            card_mod:
+              style: 'ha-card { background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; }'
+            show_humidity: true
+            tap_action:
+              action: navigate
+              navigation_path: /ipad-home/wetter
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+        - type: markdown
+          content: |-
+            ### Notification Center
+
+            {% set ns = namespace(n=0) %}{% set akku = states('sensor.flur_battery') | int(-1) %}{% if 0 <= akku <= 10 and not is_state('binary_sensor.flur_charging', 'on') %}{% set ns.n = ns.n + 1 %}<ha-icon icon="mdi:battery-alert-variant-outline"></ha-icon> **Sonos Move: Akku {{ akku }} %** – bitte laden
+
+            {% endif %}{% if ns.n == 0 %}_Keine Meldungen_{% endif %}
+          card_mod:
+            style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } h3 { color: #e8eef7 !important; font-weight: 400 !important; font-size: 22px !important;
+              } p { color: #8a94a6 !important; } strong { color: #ffb4a8 !important; font-weight: 500 !important; } ha-icon { color: #ff6b5a; --mdc-icon-size: 20px; vertical-align: -4px; margin-right: 4px;
+              }'
+        - type: grid
+          columns: 2
+          square: false
+          cards:
+          - type: custom:button-card
+            entity: person.person_1
+            show_entity_picture: true
+            show_state: true
+            size: 58px
+            styles:
+              card:
+              - background: none
+              - border: none
+              - box-shadow: none
+              - padding: 2px
+              entity_picture:
+              - border-radius: 50%
+              name:
+              - font-size: 14px
+              - color: '#e8eef7'
+              state:
+              - font-size: 12px
+              - color: '#8a94a6'
+            tap_action:
+              action: navigate
+              navigation_path: '#person1'
+          - type: custom:button-card
+            entity: person.person_2
+            show_entity_picture: true
+            show_state: true
+            size: 58px
+            styles:
+              card:
+              - background: none
+              - border: none
+              - box-shadow: none
+              - padding: 2px
+              entity_picture:
+              - border-radius: 50%
+              name:
+              - font-size: 14px
+              - color: '#e8eef7'
+              state:
+              - font-size: 12px
+              - color: '#8a94a6'
+            tap_action:
+              action: navigate
+              navigation_path: '#person2'
+          card_mod:
+            style: '#root { grid-gap: 4px !important; gap: 4px !important; max-width: 230px !important; margin: 0 0 0 65px !important; }'
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    corner:
+      type: custom:ipad-rahmen
+      style: 'flex-direction: row; align-items: flex-end; gap: 14px; overflow: visible; background: none; border: none; box-shadow: none; border-radius: 0;'
+      cards:
+      - type: custom:button-card
+        name: Kameras
+        icon: mdi:cctv
+        size: 50px
+        show_state: false
+        show_label: true
+        label: '[[[ const ids = [''switch.strasse_motion_detection'',''switch.flur_motion_detection'',''switch.hof_motion_detection'']; const an = ids.filter(i => states[i] && states[i].state === ''on'').length;
+          return an + ''/'' + ids.length; ]]]'
+        triggers_update:
+        - switch.strasse_motion_detection
+        - switch.flur_motion_detection
+        - switch.hof_motion_detection
+        tap_action:
+          action: navigate
+          navigation_path: '#cams'
+        styles:
+          card:
+          - background: none
+          - border: none
+          - box-shadow: none
+          - padding: 4px
+          - width: 96px
+          name:
+          - font-size: 13px
+          - color: '#e8eef7'
+          - padding-top: 6px
+          label:
+          - font-size: 12px
+          - color: '#b6c0ce'
+          icon:
+          - color: '#e8eef7'
+    dialogs:
+      '#cams':
+        name: Kameras
+        icon: mdi:cctv
+        cards:
+        - type: custom:bubble-card
+          card_type: separator
+          name: Bewegungserkennung
+          icon: mdi:cctv
+          sub_button:
+            main: []
+            bottom: []
+          grid_options:
+            columns: 12
+        - type: custom:bubble-card
+          card_type: button
+          name: ''
+          sub_button:
+            main: []
+            bottom: []
+          show_attribute: false
+          show_state: true
+          button_type: switch
+          icon: mdi:walk
+          show_last_changed: true
+          grid_options:
+            columns: 12
+          entity: switch.strasse_motion_detection
+        - type: custom:bubble-card
+          card_type: button
+          name: ''
+          sub_button:
+            main: []
+            bottom: []
+          show_attribute: false
+          show_state: true
+          button_type: switch
+          icon: mdi:walk
+          show_last_changed: true
+          grid_options:
+            columns: 12
+          entity: switch.flur_motion_detection
+        - type: custom:bubble-card
+          card_type: button
+          name: ''
+          sub_button:
+            main: []
+            bottom: []
+          show_attribute: false
+          show_state: true
+          button_type: switch
+          icon: mdi:walk
+          show_last_changed: true
+          grid_options:
+            columns: 12
+          entity: switch.hof_motion_detection
+      '#person1':
+        name: Person 1
+        icon: mdi:map-marker-account
+        cards:
+        - type: map
+          entities:
+          - person.person_1
+          theme_mode: light
+          hours_to_show: 0
+          aspect_ratio: '16:10'
+          card_mod:
+            style: 'ha-card { border: none !important; border-radius: 14px !important; }'
+        - type: tile
+          entity: person.person_1
+          state_content:
+          - state
+          - last_changed
+          card_mod:
+            style: 'ha-card { background: rgba(255,255,255,0.05) !important; border: none !important; margin-top: 8px !important; }'
+      '#person2':
+        name: Person 2
+        icon: mdi:map-marker-account
+        cards:
+        - type: map
+          entities:
+          - person.person_2
+          theme_mode: light
+          hours_to_show: 0
+          aspect_ratio: '16:10'
+          card_mod:
+            style: 'ha-card { border: none !important; border-radius: 14px !important; }'
+        - type: tile
+          entity: person.person_2
+          state_content:
+          - state
+          - last_changed
+          card_mod:
+            style: 'ha-card { background: rgba(255,255,255,0.05) !important; border: none !important; margin-top: 8px !important; }'
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+  theme: ipad_panel
+- title: Beleuchtung
+  path: beleuchtung
+  type: panel
+  icon: mdi:lightbulb-outline
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 2px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          {% set ids = ['light.wc', 'light.couchtisch', 'light.eg_bad_bad', 'light.ankleide_decke_1_2', 'light.licht_dusche_dusche', 'light.licht_buro_buro', 'light.stehlampe_buro', 'light.licht_kuche_kuche', 'light.kuche_arbeitsplatte', 'light.ankleide_decke_3', 'light.wohnzimmer', 'light.licht_esszimmer_esszimmer', 'light.licht_schlafzimmer_schlafzimmer', 'light.licht_yoga_decke_yoga', 'light.yogawand_yoga', 'light.licht_speicher_flur', 'light.rgbwic_string_lights', 'light.licht_dachterrasse_dachterrasse', 'light.licht_keller_keller'] %}{% set an = ids | map('states') | select('eq','on') | list | count %}
+          ## Beleuchtung · {{ an }} von {{ ids | count }} an
+      - type: custom:retro-licht-card
+        mode: dimmer
+        title: Dimmbar
+        entities:
+        - entity: light.eg_bad_bad
+          name: Bad
+        - entity: light.wc
+          name: WC
+        - entity: light.stehlampe_buro
+          name: Büro Stehlampe
+        - entity: light.kuche_arbeitsplatte
+          name: Arbeitsplatte
+        - entity: light.wohnzimmer
+          name: Wohnzimmer Ambiente
+        - entity: light.couchtisch
+          name: Couchtisch
+        - entity: light.yogawand_yoga
+          name: Yoga Wand
+        - entity: light.rgbwic_string_lights
+          name: Flur String Lights
+        card_mod:
+          style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+      - type: custom:retro-licht-card
+        mode: schalter
+        title: Schalter
+        columns: 6
+        entities:
+        - entity: light.ankleide_decke_1_2
+          name: Ankleide Decke 1+2
+        - entity: light.ankleide_decke_3
+          name: Ankleide Decke 3
+        - entity: light.licht_dusche_dusche
+          name: Dusche
+        - entity: light.licht_buro_buro
+          name: Büro Decke
+        - entity: light.licht_kuche_kuche
+          name: Küche Decke
+        - entity: light.licht_esszimmer_esszimmer
+          name: Esszimmer
+        - entity: light.licht_schlafzimmer_schlafzimmer
+          name: Schlafzimmer
+        - entity: light.licht_yoga_decke_yoga
+          name: Yoga Decke
+        - entity: light.licht_speicher_flur
+          name: Flur Speicher
+        - entity: light.licht_dachterrasse_dachterrasse
+          name: Dachterrasse
+        - entity: light.licht_keller_keller
+          name: Keller
+        card_mod:
+          style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+    content_padding: 18px 26px 48px 26px
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+- title: Beschattung
+  path: beschattung
+  type: panel
+  icon: mdi:blinds-horizontal
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 10px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          {% set ids = ['cover.rollladen_wohnzimmer_wohnzimmer', 'cover.rollladen_kuche_kuche', 'cover.rollladen_yoga_yoga'] %}{% set offen = ids | select('is_state','open') | list | count %}
+          ## Beschattung · {{ offen }} von {{ ids | count }} offen
+      - type: custom:retro-rollladen-card
+        title: Rollläden
+        fahrzeit: 20
+        entities:
+        - entity: cover.rollladen_wohnzimmer_wohnzimmer
+          name: Wohnzimmer
+        - entity: cover.rollladen_kuche_kuche
+          name: Küche
+        - entity: cover.rollladen_yoga_yoga
+          name: Yoga
+        card_mod:
+          style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+- title: Haushaltsgeräte
+  path: haushaltsgeraete
+  type: panel
+  icon: mdi:washing-machine
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 2px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          {% set ids = ['switch.kaffeevollautomat_einschalter', 'switch.kochfeld_einschalter', 'switch.geschirrspuler_einschalter', 'binary_sensor.waschmaschine_betrieb', 'binary_sensor.trockner_betrieb'] %}{% set sauger = ['vacuum.saugroboter'] %}{% set an = (ids | map('states') | select('eq','on') | list | count) + (sauger | map('states') | select('in',['cleaning','returning']) | list | count) %}
+          ## Haushaltsgeräte · {{ an }} von {{ ids | count + sauger | count }} an
+      - type: grid
+        columns: 3
+        square: false
+        cards:
+        - type: custom:ipad-rahmen
+          style: 'background: rgba(12,17,27,0.62); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; box-shadow: none;'
+          cards:
+          - type: picture
+            image: /local/ipad/bilder/kaffeevollautomat.jpg
+            card_mod:
+              style: 'ha-card { background: #ffffff !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; } img { object-fit: contain !important; max-height: 132px
+                !important; padding: 8px !important; box-sizing: border-box !important; }'
+          - type: markdown
+            content: |
+              ### Kaffeevollautomat
+              {{ 'Eingeschaltet' if is_state('switch.kaffeevollautomat_einschalter','on') else 'Aus' }} · {{ states('sensor.kaffeevollautomat_kaffees') }} Kaffees
+              {% if is_state('sensor.kaffeevollautomat_geratereinigung_empfohlen','on') %}**Reinigung fällig**{% elif is_state('sensor.kaffeevollautomat_entkalken_des_gerats_empfohlen','on') %}**Entkalken fällig**{% elif is_state('sensor.kaffeevollautomat_calc_n_clean_in_20_tassen','on') %}Calc'n'Clean in ca. 20 Tassen{% elif is_state('sensor.kaffeevollautomat_entkalken_in_20_tassen','on') %}Entkalken in ca. 20 Tassen{% else %}Wartung: nichts fällig{% endif %}
+            card_mod:
+              style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 14px 12px 14px !important; } h3 { font-size: 15px !important;
+                font-weight: 500 !important; color: #e8eef7 !important; margin: 0 0 3px 0 !important; } p { font-size: 13px !important; color: #9aa4b2 !important; margin: 0 !important; line-height: 1.45
+                !important; } strong { color: #f5a623 !important; font-weight: 600 !important; }'
+        - type: custom:ipad-rahmen
+          style: 'background: rgba(12,17,27,0.62); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; box-shadow: none;'
+          cards:
+          - type: picture
+            image: /local/ipad/bilder/kochfeld.jpg
+            card_mod:
+              style: 'ha-card { background: #ffffff !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; } img { object-fit: contain !important; max-height: 132px
+                !important; padding: 8px !important; box-sizing: border-box !important; }'
+          - type: markdown
+            content: |
+              ### Kochfeld
+              {{ 'Eingeschaltet' if is_state('switch.kochfeld_einschalter','on') else 'Aus' }}
+            card_mod:
+              style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 14px 12px 14px !important; } h3 { font-size: 15px !important;
+                font-weight: 500 !important; color: #e8eef7 !important; margin: 0 0 3px 0 !important; } p { font-size: 13px !important; color: #9aa4b2 !important; margin: 0 !important; line-height: 1.45
+                !important; }'
+        - type: custom:ipad-rahmen
+          style: 'background: rgba(12,17,27,0.62); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; box-shadow: none;'
+          cards:
+          - type: picture
+            image: /local/ipad/bilder/geschirrspueler.jpg
+            card_mod:
+              style: 'ha-card { background: #ffffff !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; } img { object-fit: contain !important; max-height: 132px
+                !important; padding: 8px !important; box-sizing: border-box !important; }'
+          - type: markdown
+            content: |
+              ### Geschirrspüler
+              {% set namen = {'auto_1': 'Auto 35-45 °C', 'auto_2': 'Auto', 'auto_3': 'Auto 65-75 °C', 'eco_50': 'Eco 50 °C', 'intensiv_70': 'Intensiv 70 °C', 'quick_45': 'Schnell 45 °C', 'glas_40': 'Glas 40 °C', 'night_wash': 'Nachtwäsche', 'pre_rinse': 'Vorspülen', 'machine_care': 'Maschinenpflege'} %}{% set p = states('select.geschirrspuler_aktives_programm') %}{% set e = states('sensor.geschirrspuler_programm_endzeit') %}{% if is_state('switch.geschirrspuler_einschalter','on') %}{% if p not in ['unknown','unavailable',''] %}{% set roh = p | replace('dishcare_dishwasher_program_','') %}{{ namen.get(roh, roh | replace('_',' ') | title) }}{% else %}Bereit{% endif %}
+              {% if e not in ['unknown','unavailable',''] %}{% set m = ((as_timestamp(e) - as_timestamp(now())) / 60) | round(0) | int %}{% if m > 0 %}noch {{ m }} min · {{ states('sensor.geschirrspuler_programm_fortschritt') }} %{% else %}fertig{% endif %}{% endif %}{% else %}Aus{% endif %}
+            card_mod:
+              style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 14px 12px 14px !important; } h3 { font-size: 15px !important;
+                font-weight: 500 !important; color: #e8eef7 !important; margin: 0 0 3px 0 !important; } p { font-size: 13px !important; color: #9aa4b2 !important; margin: 0 !important; line-height: 1.45
+                !important; }'
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+        - type: tile
+          entity: binary_sensor.waschmaschine_betrieb
+          name: Waschmaschine
+          icon: mdi:washing-machine
+          vertical: false
+          tap_action:
+            action: more-info
+          card_mod:
+            style: '{% if is_state(''binary_sensor.waschmaschine_betrieb'',''on'') %}ha-card ha-state-icon { animation: drehen 2.4s linear infinite; } @keyframes drehen { to { transform: rotate(360deg);
+              } }{% endif %} ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; }'
+        - type: tile
+          entity: binary_sensor.trockner_betrieb
+          name: Trockner
+          icon: mdi:tumble-dryer
+          vertical: false
+          tap_action:
+            action: more-info
+          card_mod:
+            style: '{% if is_state(''binary_sensor.trockner_betrieb'',''on'') %}ha-card ha-state-icon { animation: drehen 2.4s linear infinite; } @keyframes drehen { to { transform: rotate(360deg); } }{%
+              endif %} ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; }'
+        card_mod:
+          style: 'ha-card { margin-top: 10px !important; }'
+      - type: grid
+        columns: 2
+        square: false
+        card_mod:
+          style: 'ha-card { margin-top: 10px !important; }'
+        cards:
+        - type: tile
+          entity: vacuum.saugroboter
+          name: Saugroboter EG
+          icon: mdi:robot-vacuum
+          vertical: false
+          state_content: state
+          tap_action:
+            action: navigate
+            navigation_path: '#sauger'
+          icon_tap_action:
+            action: navigate
+            navigation_path: '#sauger'
+          hold_action:
+            action: more-info
+          card_mod:
+            style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; }'
+    dialogs:
+      '#sauger':
+        name: Saugroboter EG
+        icon: mdi:robot-vacuum
+        width: min(760px, 94vw)
+        cards:
+        - type: custom:dreame-vacuum-map-card
+          entity: vacuum.saugroboter
+          title: X50 Ultra
+          map_entity: camera.saugroboter_map
+          theme: dark
+          language: de
+          map_overlays:
+          - room_labels
+          - vacuum
+          - charger
+          map_height: 360px
+          card_mod:
+            style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+- title: Musik
+  path: musik
+  type: panel
+  icon: mdi:spotify
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 10px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          ## Musik
+      - type: custom:sonos-card
+        entityId: media_player.alles
+        player:
+          artworkAsBackground: true
+          controlsLargeIcons: true
+          hideEntityName: false
+          hideHeader: false
+          showAudioInputFormat: false
+          showSource: false
+          showVolumeUpAndDownButtons: false
+        card_mod:
+          style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+    corner:
+      type: custom:button-card
+      entity: sensor.flur_battery
+      triggers_update:
+      - binary_sensor.flur_charging
+      show_name: false
+      show_icon: false
+      show_state: false
+      tap_action:
+        action: more-info
+      hold_action:
+        action: more-info
+      styles:
+        card:
+        - background: rgba(12,17,27,0.62)
+        - border: 1px solid rgba(255,255,255,0.09)
+        - border-radius: 16px
+        - box-shadow: none
+        - padding: 12px 16px 14px 16px
+        - width: fit-content
+        grid:
+        - grid-template-areas: '"inhalt"'
+        - grid-template-columns: auto
+        - grid-template-rows: auto
+        custom_fields:
+          inhalt:
+          - justify-self: start
+          - line-height: normal
+      custom_fields:
+        inhalt: '[[[ const kopfHtml = (() => { const p = parseFloat(entity.state); const laedt = (states[''binary_sensor.flur_charging''] || {}).state === ''on''; const wert = isNaN(p) ? ''–'' : Math.round(p)
+          + '' %''; const farbe = isNaN(p) ? ''#8a94a6'' : ''hsl('' + Math.round(Math.max(0, Math.min(p, 100)) / 100 * 120) + '',70%,56%)''; const blitz = laedt ? ''<ha-icon icon="mdi:lightning-bolt" style="--mdc-icon-size:18px;color:#f5b700;margin-right:2px;vertical-align:-2px"></ha-icon>''
+          : ''''; const zusatz = laedt ? '' · <span style="color:#f5b700">lädt</span>'' : ''''; return ''<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:#8a94a6;letter-spacing:.02em">Sonos
+          Move'' + zusatz + ''</span><span style="font-size:22px;font-weight:500;color:'' + farbe + ''">'' + blitz + wert + ''</span></div>''; })(); const akkuHtml = (() => { const p = parseFloat(entity.state);
+          const laedt = (states[''binary_sensor.flur_charging''] || {}).state === ''on''; const an = isNaN(p) || p <= 0 ? 0 : Math.min(10, Math.max(1, Math.round(p / 10))); const b = (166 - 9 * 3) / 10;
+          let seg = ''''; for (let i = 0; i < 10; i++) { const x = 6 + i * (b + 3); const hue = Math.round(i / 9 * 120); if (i < an) { seg += ''<rect x="'' + x.toFixed(1) + ''" y="6" width="'' + b.toFixed(1)
+          + ''" height="32" rx="2.5" fill="hsl('' + hue + '',72%,50%)"/>''; } else if (laedt && i === an) { seg += ''<rect x="'' + x.toFixed(1) + ''" y="6" width="'' + b.toFixed(1) + ''" height="32" rx="2.5"
+          fill="hsl('' + hue + '',72%,50%)"><animate attributeName="opacity" values="0.12;0.9;0.12" dur="1.8s" repeatCount="indefinite"/></rect>''; } else { seg += ''<rect x="'' + x.toFixed(1) + ''" y="6"
+          width="'' + b.toFixed(1) + ''" height="32" rx="2.5" fill="rgba(255,255,255,0.07)"/>''; } } return ''<svg viewBox="0 0 188 44" width="190" height="44" style="display:block" role="img" aria-label="Akku
+          '' + (isNaN(p) ? ''unbekannt'' : Math.round(p) + '' Prozent'') + ''"><rect x="1" y="1" width="176" height="42" rx="7" fill="rgba(0,0,0,0.25)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/><rect
+          x="179" y="13" width="8" height="18" rx="2" fill="rgba(255,255,255,0.35)"/>'' + seg + ''</svg>''; })(); return ''<div style="width:190px;display:flex;flex-direction:column;gap:9px">'' + kopfHtml
+          + akkuHtml + ''</div>''; ]]]'
+- title: Auto
+  path: auto
+  type: panel
+  icon: mdi:car
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 10px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          ## Auto · {{ states('sensor.auto_battery_hv_state_of_charge') }} % · {{ states('sensor.auto_range_ev_remaining_range') }} km
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+        - type: vertical-stack
+          cards:
+          - type: custom:bmw-cardata-vehicle-card
+            device_id: 8ace259bd3854e4a0c5be209194c1285
+            soc_source: soc
+            show_title: false
+            show_image: true
+            show_range: true
+            show_indicators: true
+            show_map: false
+            show_buttons: false
+            card_mod:
+              style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 14px !important; box-shadow: none !important; } ha-card {
+                max-height: 296px !important; overflow: hidden !important; } img { max-height: 150px !important; object-fit: contain !important; }'
+          - type: map
+            entities:
+            - device_tracker.auto_location
+            theme_mode: light
+            hours_to_show: 0
+            aspect_ratio: '16:10'
+            card_mod:
+              style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 14px !important; box-shadow: none !important; } ha-card {
+                margin-top: 10px !important; overflow: hidden !important; }'
+        - type: grid
+          columns: 2
+          square: false
+          cards:
+          - type: tile
+            entity: device_tracker.auto_location
+            name: Standort
+            icon: mdi:map-marker
+            vertical: false
+            hide_state: false
+            card_mod:
+              style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 14px !important; box-shadow: none !important; } ha-card {
+                height: 66px !important; }'
+          - type: tile
+            entity: sensor.auto_vehicle_mileage
+            name: Kilometerstand
+            icon: mdi:counter
+            vertical: false
+            hide_state: false
+            card_mod:
+              style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 14px !important; box-shadow: none !important; } ha-card {
+                height: 66px !important; }'
+          - type: tile
+            entity: sensor.wallbox_ladeleistung
+            name: Ladeleistung
+            icon: mdi:ev-station
+            vertical: false
+            hide_state: false
+            card_mod:
+              style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 14px !important; box-shadow: none !important; } ha-card {
+                height: 66px !important; }'
+          - type: tile
+            entity: sensor.wallbox_ladekosten_gesamt
+            name: Ladekosten
+            icon: mdi:cash-multiple
+            vertical: false
+            hide_state: false
+            card_mod:
+              style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 14px !important; box-shadow: none !important; } ha-card {
+                height: 66px !important; }'
+          - type: markdown
+            card_mod:
+              style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 14px !important; box-shadow: none !important; margin-bottom:
+                0 !important; } ha-markdown { padding: 12px 14px !important; } h3 { font-size: 14px !important; font-weight: 500 !important; color: #e8eef7 !important; margin: 0 0 6px 0 !important; } p
+                { font-size: 13px !important; color: #9aa4b2 !important; margin: 0 !important; line-height: 1.7 !important; } td { font-size: 13px !important; color: #9aa4b2 !important; padding: 1px 10px
+                1px 0 !important; } table { border: none !important; } ha-card { height: fit-content !important; }'
+            content: |
+              ### Reifendruck
+              {% set r = ['front_left','front_right','rear_left','rear_right'] %}{% set n = ['Vorn links','Vorn rechts','Hinten links','Hinten rechts'] %}{% for i in range(4) %}{% set v = states('sensor.auto_tire_pressure_' + r[i]) %}{{ n[i] }} &nbsp; **{{ (v | float(0) / 100) | round(1) }}** bar{% if not loop.last %}
+              {% endif %}{% endfor %}
+- title: Energie
+  path: energie
+  type: panel
+  icon: mdi:lightning-bolt
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 10px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          ## Energie
+      - type: markdown
+        content: |
+          #### Akkus & Batterien
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 6px 4px !important; } h4 { font-size: 14px !important; font-weight:
+            400 !important; color: #8a94a6 !important; margin: 0 !important; letter-spacing: .03em !important; }'
+      - type: grid
+        columns: 7
+        square: false
+        cards:
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.flur_battery
+          variables:
+            name: Sonos Move
+            laden_entity: binary_sensor.flur_charging
+          triggers_update:
+          - binary_sensor.flur_charging
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.saugroboter_battery_level
+          variables:
+            name: Saugroboter
+            laden_entity: binary_sensor.saugroboter_charging_state
+          triggers_update:
+          - binary_sensor.saugroboter_charging_state
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.auto_battery_hv_state_of_charge
+          variables:
+            name: Elektroauto
+            laden_entity: sensor.auto_charging_ev_charging_state
+          triggers_update:
+          - sensor.auto_charging_ev_charging_state
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.handy_1_battery_level
+          variables:
+            name: Handy (Person 1)
+            laden_entity: sensor.handy_1_battery_state
+          triggers_update:
+          - sensor.handy_1_battery_state
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.handy_2_battery_level
+          variables:
+            name: Handy (Person 2)
+            laden_entity: sensor.handy_2_battery_state
+          triggers_update:
+          - sensor.handy_2_battery_state
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.watch_2_battery_level
+          variables:
+            name: Watch (Person 2)
+            laden_entity: sensor.watch_2_battery_state
+          triggers_update:
+          - sensor.watch_2_battery_state
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.ipad_1_battery_level
+          variables:
+            name: iPad 1
+            laden_entity: sensor.ipad_1_battery_state
+          triggers_update:
+          - sensor.ipad_1_battery_state
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.ipad_2_battery_level
+          variables:
+            name: iPad 2
+            laden_entity: sensor.ipad_2_battery_state
+          triggers_update:
+          - sensor.ipad_2_battery_state
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.temperaturfuhler_heizung_batteriestatus
+          variables:
+            name: Tuya Heizung
+            stufen:
+              low: 10
+              middle: 50
+              high: 100
+            stufen_text:
+              low: niedrig
+              middle: mittel
+              high: hoch
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.temperatur_getranke_batteriestatus
+          variables:
+            name: Tuya Getränke
+            stufen:
+              low: 10
+              middle: 50
+              high: 100
+            stufen_text:
+              low: niedrig
+              middle: mittel
+              high: hoch
+        - type: custom:button-card
+          template: akku_kachel
+          entity: sensor.gw2000a_wh90_battery
+          variables:
+            name: WS90
+            spannung:
+              leer: 2.4
+              voll: 3.2
+            zusatz:
+              entity: sensor.gw2000a_wh90_capacitor
+              icon: mdi:white-balance-sunny
+              einheit: V
+          triggers_update:
+          - sensor.gw2000a_wh90_capacitor
+        - type: custom:button-card
+          template: akku_kachel
+          entity: binary_sensor.gw2000a_battery_1
+          variables:
+            name: Ecowitt Flur
+            stufen:
+              'off': 100
+              'on': 10
+            stufen_text:
+              'off': ok
+              'on': leer
+        - type: custom:button-card
+          template: akku_kachel
+          entity: binary_sensor.gw2000a_battery_5
+          variables:
+            name: Ecowitt Garten
+            stufen:
+              'off': 100
+              'on': 10
+            stufen_text:
+              'off': ok
+              'on': leer
+        - type: custom:button-card
+          template: akku_kachel
+          entity: binary_sensor.gw2000a_battery_7
+          variables:
+            name: Ecowitt Tester
+            stufen:
+              'off': 100
+              'on': 10
+            stufen_text:
+              'off': ok
+              'on': leer
+      - type: markdown
+        content: |
+          #### Strom
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 14px 4px 6px 4px !important; }'
+      - type: custom:button-card
+        entity: sensor.heizung_smart_meter_2_energie_gesamt
+        triggers_update:
+        - sensor.warmwasser_smart_meter_3_energie_gesamt
+        - sensor.waschmaschine_smart_meter_energie_gesamt
+        - input_number.wp_strom_zahler_offset
+        - sensor.heizung_smart_meter_2_leistung_l1
+        - sensor.warmwasser_smart_meter_3_leistung_l1
+        - sensor.waschmaschine_smart_meter_leistung_l1
+        show_name: false
+        show_icon: false
+        show_state: false
+        tap_action:
+          action: none
+        hold_action:
+          action: none
+        styles:
+          card:
+          - background: rgba(12,17,27,0.62)
+          - border: 1px solid rgba(255,255,255,0.09)
+          - border-radius: 16px
+          - box-shadow: none
+          - padding: 14px 16px 16px 16px
+          - cursor: default
+          grid:
+          - grid-template-areas: '"inhalt"'
+          - grid-template-columns: 1fr
+          - grid-template-rows: auto
+          custom_fields:
+            inhalt:
+            - justify-self: stretch
+            - line-height: normal
+        custom_fields:
+          inhalt: '[[[ const E = { heiz: ''sensor.heizung_smart_meter_2_energie_gesamt'', ww: ''sensor.warmwasser_smart_meter_3_energie_gesamt'', tr: ''sensor.waschmaschine_smart_meter_energie_gesamt'',
+            off: ''input_number.wp_strom_zahler_offset'', pHeiz: ''sensor.heizung_smart_meter_2_leistung_l1'', pWw: ''sensor.warmwasser_smart_meter_3_leistung_l1'', pTr: ''sensor.waschmaschine_smart_meter_leistung_l1'',
+            }; const zahl = id => { const s = states[id]; return s ? parseFloat(s.state) : NaN; }; const watt = id => { const s = states[id]; if (!s) return NaN; const w = parseFloat(s.state); return (s.attributes
+            || {}).unit_of_measurement === ''kW'' ? w * 1000 : w; }; const leistungText = w => isNaN(w) ? ''–'' : (w >= 1000 ? (w / 1000).toFixed(2).replace(''.'', '','') + '' kW'' : Math.round(w) + ''
+            W''); const rolle = (wert, ganz, dez, px) => { const zelle = (z, rot) => ''<span style="display:inline-flex;justify-content:center;align-items:center;width:'' + Math.round(px * 0.74) + ''px;height:''
+            + Math.round(px * 1.32) + ''px;margin-right:2px;border-radius:3px;font-family:\''Roboto Mono\'',ui-monospace,Menlo,monospace;font-size:'' + px + ''px;font-weight:500;color:#f4f4f4;background:''
+            + (rot ? ''linear-gradient(#6d0b10,#b3161d 50%,#6d0b10)'' : ''linear-gradient(#0b0b0b,#2b2b2b 50%,#0b0b0b)'') + '';box-shadow:inset 0 3px 3px rgba(0,0,0,.75),inset 0 -3px 3px rgba(0,0,0,.75)">''
+            + z + ''</span>''; if (isNaN(wert)) return Array(ganz + dez).fill(0).map((_, i) => zelle(''–'', i >= ganz)).join(''''); const [g, d] = wert.toFixed(dez).split(''.''); const gz = g.padStart(ganz,
+            ''0'').slice(-ganz); return gz.split('''').map(z => zelle(z, false)).join('''') + ''<span style="display:inline-block;width:4px"></span>'' + (d || '''').split('''').map(z => zelle(z, true)).join('''');
+            }; const heiz = zahl(E.heiz), ww = zahl(E.ww), tr = zahl(E.tr); const off = isNaN(zahl(E.off)) ? 0 : zahl(E.off); const FAKTOR = 1.01; const BASIS_SUMME = 18078.73; /* Tuya zaehlen ~1 % zu wenig:
+            Faktor nur auf den Verbrauch seit dem Abgleich 29.10.2026 (Summe der Unterzaehler damals 18078,73). Bei neuem Abgleich Offset UND BASIS_SUMME setzen. */ const summe = heiz + ww + tr; const gesamt
+            = summe + off + (summe - BASIS_SUMME) * (FAKTOR - 1); const pH = watt(E.pHeiz), pW = watt(E.pWw), pT = watt(E.pTr); const pSum = [pH, pW, pT].filter(x => !isNaN(x)).reduce((a, b) => a + b, 0);
+            const kw = pSum / 1000; const dauer = kw > 0.02 ? Math.max(0.6, Math.min(14, 4 / kw)).toFixed(2) : null; const scheibe = ''<svg width="150" height="12" viewBox="0 0 150 12" style="display:block;border-radius:2px"><defs><linearGradient
+            id="fs" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6f757d"/><stop offset=".5" stop-color="#c9ced4"/><stop offset="1" stop-color="#6f757d"/></linearGradient></defs><rect width="150"
+            height="12" fill="url(#fs)"/><rect y="0" width="12" height="12" fill="#c4161c" x="'' + (dauer ? ''-12'' : ''69'') + ''">'' + (dauer ? ''<animate attributeName="x" from="-12" to="150" dur="''
+            + dauer + ''s" repeatCount="indefinite"/>'' : '''') + ''</rect></svg>''; const unter = (name, wert, w, icon) => ''<div style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,0.22);border:1px
+            solid rgba(255,255,255,0.06)"><div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#8a94a6"><span><ha-icon icon="'' + icon + ''" style="--mdc-icon-size:15px;vertical-align:-3px;margin-right:4px;color:#b6c0ce"></ha-icon>''
+            + name + ''</span><span style="color:'' + (w > 5 ? ''#f5b700'' : ''#8a94a6'') + ''">'' + leistungText(w) + ''</span></div><div style="white-space:nowrap">'' + rolle(wert, 5, 1, 15) + ''<span
+            style="font-size:11px;color:#8a94a6;margin-left:4px">kWh</span></div></div>''; return ''<div style="display:flex;flex-direction:column;gap:12px;width:100%">'' + ''<div style="display:flex;justify-content:space-between;align-items:baseline"><span
+            style="font-size:15px;color:#e8eef7"><ha-icon icon="mdi:meter-electric-outline" style="--mdc-icon-size:18px;vertical-align:-3px;margin-right:6px;color:#b6c0ce"></ha-icon>Stromzähler WP-Strom</span><span
+            style="font-size:13px;color:'' + (pSum > 5 ? ''#f5b700'' : ''#8a94a6'') + ''">'' + leistungText(pSum) + ''</span></div>'' + ''<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px
+            14px;border-radius:12px;background:linear-gradient(180deg,#232833,#171b23);border:1px solid rgba(255,255,255,0.08)"><div style="white-space:nowrap">'' + rolle(gesamt, 6, 1, 26) + ''<span style="font-size:14px;color:#b6c0ce;margin-left:6px">kWh</span></div><div
+            style="display:flex;flex-direction:column;gap:4px;font-size:10px;color:#8a94a6;letter-spacing:.04em">'' + scheibe + ''<span>'' + (off ? ''Zählerstand'' : ''Summe der Unterzähler'') + ''</span></div></div>''
+            + ''<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'' + unter(''Heizung'', heiz, pH, ''mdi:heat-pump'') + unter(''Warmwasser'', ww, pW, ''mdi:water-boiler'') + unter(''Trockner'',
+            tr, pT, ''mdi:tumble-dryer'') + ''</div>'' + ''</div>''; ]]]'
+      - type: custom:button-card
+        entity: input_number.hausstrom_zahlerstand_abgelesen
+        triggers_update:
+        - input_datetime.hausstrom_abgelesen_am
+        - sensor.wallbox_energiezahler
+        - sensor.fritz_dect_200_1_energie
+        - input_number.hausstrom_grundlast
+        - input_number.hausstrom_wallbox_bei_ablesung
+        - input_number.hausstrom_waschmaschine_bei_ablesung
+        - sensor.wallbox_ladeleistung
+        - sensor.fritz_dect_200_1_leistung
+        show_name: false
+        show_icon: false
+        show_state: false
+        tap_action:
+          action: more-info
+        hold_action:
+          action: more-info
+        styles:
+          card:
+          - background: rgba(12,17,27,0.62)
+          - border: 1px solid rgba(255,255,255,0.09)
+          - border-radius: 16px
+          - box-shadow: none
+          - padding: 14px 16px 16px 16px
+          - margin-top: 10px
+          grid:
+          - grid-template-areas: '"inhalt"'
+          - grid-template-columns: 1fr
+          - grid-template-rows: auto
+          custom_fields:
+            inhalt:
+            - justify-self: stretch
+            - line-height: normal
+        custom_fields:
+          inhalt: '[[[ const zahl = id => { const s = states[id]; return s ? parseFloat(s.state) : NaN; }; const leistungText = w => isNaN(w) ? ''–'' : (w >= 1000 ? (w / 1000).toFixed(2).replace(''.'',
+            '','') + '' kW'' : Math.round(w) + '' W''); const rolle = (wert, ganz, dez, px) => { const zelle = (z, rot) => ''<span style="display:inline-flex;justify-content:center;align-items:center;width:''
+            + Math.round(px * 0.74) + ''px;height:'' + Math.round(px * 1.32) + ''px;margin-right:2px;border-radius:3px;font-family:\''Roboto Mono\'',ui-monospace,Menlo,monospace;font-size:'' + px + ''px;font-weight:500;color:#f4f4f4;background:''
+            + (rot ? ''linear-gradient(#6d0b10,#b3161d 50%,#6d0b10)'' : ''linear-gradient(#0b0b0b,#2b2b2b 50%,#0b0b0b)'') + '';box-shadow:inset 0 3px 3px rgba(0,0,0,.75),inset 0 -3px 3px rgba(0,0,0,.75)">''
+            + z + ''</span>''; if (isNaN(wert)) return Array(ganz + dez).fill(0).map((_, i) => zelle(''–'', i >= ganz)).join(''''); const [g, d] = wert.toFixed(dez).split(''.''); const gz = g.padStart(ganz,
+            ''0'').slice(-ganz); return gz.split('''').map(z => zelle(z, false)).join('''') + ''<span style="display:inline-block;width:4px"></span>'' + (d || '''').split('''').map(z => zelle(z, true)).join('''');
+            }; const stand = zahl(''input_number.hausstrom_zahlerstand_abgelesen''); const ts = ((states[''input_datetime.hausstrom_abgelesen_am''] || {}).attributes || {}).timestamp; const wb = zahl(''sensor.wallbox_energiezahler'')
+            / 1000; const wm = zahl(''sensor.fritz_dect_200_1_energie''); const gl = zahl(''input_number.hausstrom_grundlast''); const abgelesen = stand > 0 && ts; const h = abgelesen ? Math.max(0, (Date.now()
+            / 1000 - ts) / 3600) : 0; const wbSeit = Math.max(0, wb - zahl(''input_number.hausstrom_wallbox_bei_ablesung'')); const wmSeit = Math.max(0, wm - zahl(''input_number.hausstrom_waschmaschine_bei_ablesung''));
+            const glSeit = (isNaN(gl) ? 0 : gl) * h; const gesamt = abgelesen ? stand + (isNaN(wbSeit) ? 0 : wbSeit) + (isNaN(wmSeit) ? 0 : wmSeit) + glSeit : NaN; const pWb = zahl(''sensor.wallbox_ladeleistung''),
+            pWm = zahl(''sensor.fritz_dect_200_1_leistung''), pGl = isNaN(gl) ? NaN : gl * 1000; const pSum = [pWb, pWm, pGl].filter(x => !isNaN(x)).reduce((a, b) => a + b, 0); const kw = pSum / 1000; const
+            dauer = kw > 0.02 ? Math.max(0.6, Math.min(14, 4 / kw)).toFixed(2) : null; const scheibe = ''<svg width="150" height="12" viewBox="0 0 150 12" style="display:block;border-radius:2px"><defs><linearGradient
+            id="fsh" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6f757d"/><stop offset=".5" stop-color="#c9ced4"/><stop offset="1" stop-color="#6f757d"/></linearGradient></defs><rect width="150"
+            height="12" fill="url(#fsh)"/><rect y="0" width="12" height="12" fill="#c4161c" x="'' + (dauer ? ''-12'' : ''69'') + ''">'' + (dauer ? ''<animate attributeName="x" from="-12" to="150" dur="''
+            + dauer + ''s" repeatCount="indefinite"/>'' : '''') + ''</rect></svg>''; const zwei = n => String(n).padStart(2, ''0''); const d = abgelesen ? new Date(ts * 1000) : null; const hinweis = abgelesen
+            ? ''geschätzt · abgelesen '' + zwei(d.getDate()) + ''.'' + zwei(d.getMonth() + 1) + ''. '' + zwei(d.getHours()) + '':'' + zwei(d.getMinutes()) : ''noch nicht abgelesen''; const unter = (name,
+            wert, w, icon, zusatz) => ''<div style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.06)"><div
+            style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#8a94a6"><span><ha-icon icon="'' + icon + ''" style="--mdc-icon-size:15px;vertical-align:-3px;margin-right:4px;color:#b6c0ce"></ha-icon>''
+            + name + ''</span><span style="color:'' + (w > 5 ? ''#f5b700'' : ''#8a94a6'') + ''">'' + leistungText(w) + ''</span></div><div style="white-space:nowrap">'' + rolle(wert, 5, 1, 15) + ''<span
+            style="font-size:11px;color:#8a94a6;margin-left:4px">kWh</span>'' + (zusatz ? ''<span style="font-size:10px;color:#8a94a6;margin-left:6px">'' + zusatz + ''</span>'' : '''') + ''</div></div>'';
+            return ''<div style="display:flex;flex-direction:column;gap:12px;width:100%">'' + ''<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;color:#e8eef7"><ha-icon
+            icon="mdi:meter-electric" style="--mdc-icon-size:18px;vertical-align:-3px;margin-right:6px;color:#b6c0ce"></ha-icon>Stromzähler Hausstrom</span><span style="font-size:13px;color:'' + (pSum >
+            5 ? ''#f5b700'' : ''#8a94a6'') + ''">≈ '' + leistungText(pSum) + ''</span></div>'' + ''<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 14px;border-radius:12px;background:linear-gradient(180deg,#232833,#171b23);border:1px
+            solid rgba(255,255,255,0.08)"><div style="white-space:nowrap">'' + rolle(gesamt, 6, 1, 26) + ''<span style="font-size:14px;color:#b6c0ce;margin-left:6px">kWh</span></div><div style="display:flex;flex-direction:column;gap:4px;font-size:10px;color:#8a94a6;letter-spacing:.04em">''
+            + scheibe + ''<span>'' + hinweis + ''</span></div></div>'' + ''<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'' + unter(''Wallbox'', wb, pWb, ''mdi:ev-station'') + unter(''Waschmaschine'',
+            wm, pWm, ''mdi:washing-machine'') + unter(''Grundlast (geschätzt)'', abgelesen ? glSeit : NaN, pGl, ''mdi:home-lightning-bolt-outline'', ''seit Abl.'') + ''</div>'' + ''</div>''; ]]]'
+- title: Heizung
+  path: heizung
+  type: panel
+  icon: mdi:radiator
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: custom:wp-modus-card
+        entity: input_select.wp_betriebsmodus
+        title: Betriebsmodus
+        status:
+          wp: switch.esphome_web_avarma_warmepumpe_ein_aus
+          vorlauf: sensor.esphome_web_avarma_vorlauftemperatur
+          vorlauf_soll: number.esphome_web_f34aa0_vorlauf_solltemperatur
+          kompressor: sensor.esphome_web_avarma_kompressor_frequenz_ist
+          aussen: sensor.aussentemperatur_avarma_korrigiert
+          betriebsart: select.esphome_web_avarma_betriebsmodus_wahl
+        card_mod:
+          style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+        design: retro
+        stoerung:
+        - sensor.esphome_web_avarma_fehlercode_0
+        - sensor.esphome_web_avarma_fehlercode_1
+        kompakt: true
+      - type: grid
+        columns: 3
+        square: false
+        cards:
+        - type: custom:retro-gauge-card
+          entity: sensor.esphome_web_avarma_vorlauftemperatur
+          setpoint_entity: number.esphome_web_f34aa0_vorlauf_solltemperatur
+          min: 10
+          max: 50
+          title: Vorlauf
+          unit: °C
+          maker: Eigenbau
+          vibrate_entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+          card_mod:
+            style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+          max_height: 112
+        - type: custom:retro-gauge-card
+          entity: sensor.esphome_web_avarma_rucklauftemperatur
+          min: 10
+          max: 50
+          title: Rücklauf
+          unit: °C
+          maker: Eigenbau
+          vibrate_entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+          card_mod:
+            style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+          max_height: 112
+        - type: custom:retro-gauge-card
+          entity: sensor.esphome_web_avarma_kompressor_frequenz_ist
+          setpoint_entity: number.esphome_web_avarma_kompressor_maximalfrequenz
+          min: 0
+          max: 100
+          major: 20
+          minor: 5
+          title: Kompressor
+          unit: Hz
+          decimals: 0
+          setpoint_label: Max
+          vibrate_entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+          card_mod:
+            style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+          max_height: 112
+        - type: custom:retro-gauge-card
+          entity: sensor.durchfluss_berechnet
+          min: 0
+          max: 25
+          major: 5
+          minor: 1
+          title: Durchfluss
+          unit: L/min
+          maker: berechnet
+          stops:
+          - - 0
+            - '#a51d1d'
+          - - 8
+            - '#cc6a2a'
+          - - 11
+            - '#d6a536'
+          - - 14
+            - '#6b9a4a'
+          - - 25
+            - '#3f7a3a'
+          card_mod:
+            style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+          max_height: 112
+        - type: custom:retro-gauge-card
+          entity: sensor.heat_pump_cop_instantaneous
+          setpoint_entity: sensor.heat_pump_cop_daily
+          min: 0
+          max: 8
+          major: 1
+          minor: 0.25
+          title: COP
+          unit: ''
+          maker: Momentanwert
+          decimals: 1
+          setpoint_decimals: 1
+          label: Jetzt
+          setpoint_label: Heute
+          stops:
+          - - 0
+            - '#a51d1d'
+          - - 2
+            - '#cc6a2a'
+          - - 3
+            - '#d6a536'
+          - - 4.5
+            - '#6b9a4a'
+          - - 8
+            - '#3f7a3a'
+          card_mod:
+            style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+          max_height: 112
+        - type: custom:retro-gauge-card
+          entity: sensor.heat_pump_jaz
+          setpoint_entity: sensor.heat_pump_cop_monthly
+          min: 0
+          max: 8
+          major: 1
+          minor: 0.25
+          title: JAZ
+          unit: ''
+          maker: Jahresarbeitszahl
+          decimals: 2
+          setpoint_decimals: 2
+          label: Jahr
+          setpoint_label: Monat
+          stops:
+          - - 0
+            - '#a51d1d'
+          - - 2
+            - '#cc6a2a'
+          - - 3
+            - '#d6a536'
+          - - 4.5
+            - '#6b9a4a'
+          - - 8
+            - '#3f7a3a'
+          card_mod:
+            style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+          max_height: 112
+      - type: custom:retro-luefter-card
+        entity: sensor.esphome_web_avarma_lufter_1_drehzahl
+        setpoint_entity: number.controllroom_esphome_web_avarma_lufter_solldrehzahl_manuell
+        max_entity: sensor.controllroom_esphome_web_avarma_luefter_maximaldrehzahl_anlage
+        lamelle_entity: sensor.esphome_web_avarma_verdampfertemperatur
+        umgebung_entity: sensor.esphome_web_avarma_aussentemperatur
+        online_entity: binary_sensor.controllroom_esphome_web_avarma_modbus_online
+        max: 1000
+        maker: Eigenbau
+        card_mod:
+          style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+        abtau_entity: sensor.esphome_web_avarma_betriebsstatus
+- title: Wartung
+  path: wartung
+  type: panel
+  icon: mdi:cog-outline
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 10px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          {% set teile = ['sensor.saugroboter_main_brush_left','sensor.saugroboter_side_brush_left','sensor.saugroboter_filter_left','sensor.saugroboter_sensor_dirty_left','sensor.saugroboter_wheel_dirty_left','sensor.saugroboter_scale_inhibitor_left'] %}{% set paare = [['sensor.kaffeevollautomat_entkalken_in_20_tassen','input_boolean.merker_kaffee_entkalken_bald'],['sensor.kaffeevollautomat_entkalken_des_gerats_empfohlen','input_boolean.merker_kaffee_entkalken_faellig'],['sensor.kaffeevollautomat_calc_n_clean_in_20_tassen','input_boolean.merker_kaffee_calc_n_clean_bald'],['sensor.kaffeevollautomat_geratereinigung_empfohlen','input_boolean.merker_kaffee_reinigung_faellig'],['sensor.kaffeevollautomat_calc_n_clean_des_gerats_empfohlen','input_boolean.merker_kaffee_calc_n_clean_faellig'],['sensor.geschirrspuler_salz_fast_leer','input_boolean.merker_spueler_salz_bald'],['sensor.geschirrspuler_klarspuler_fast_leer','input_boolean.merker_spueler_klarspueler_bald'],['sensor.kuche_geschirrspuler_fehlender_klarspuler','input_boolean.merker_spueler_klarspueler_fehlt'],['sensor.kuche_geschirrspuler_intelligente_erinnerung_zur_filterreinigung','input_boolean.merker_spueler_filter_reinigen']] %}{% set ns = namespace(k=0) %}{% for s, m in paare %}{% if is_state(m, 'on') or states(s) in ['present','confirmed'] %}{% set ns.k = ns.k + 1 %}{% endif %}{% endfor %}{% set n = (teile | map('states') | map('float', 100) | select('le', 10) | list | count) + ns.k + (states.update | selectattr('state','eq','on') | list | count) %}
+          ## Wartung · {{ 'alles in Ordnung' if n == 0 else (n ~ ' fällig') }}
+      - type: custom:retro-wartung-card
+        card_mod:
+          style: 'ha-card { background: rgba(12,17,27,0.62) !important; border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px !important; box-shadow: none !important; }'
+        platten:
+        - titel: Saugroboter X50
+          typ: verschleiss
+          breit: true
+          fehler: sensor.saugroboter_error
+          teile:
+          - name: Hauptbürste
+            entity: sensor.saugroboter_main_brush_left
+            rest: sensor.saugroboter_main_brush_time_left
+            reset: button.saugroboter_reset_main_brush
+            knopf: getauscht
+          - name: Seitenbürste
+            entity: sensor.saugroboter_side_brush_left
+            rest: sensor.saugroboter_side_brush_time_left
+            reset: button.saugroboter_reset_side_brush
+            knopf: getauscht
+          - name: Filter
+            entity: sensor.saugroboter_filter_left
+            rest: sensor.saugroboter_filter_time_left
+            reset: button.saugroboter_reset_filter
+            knopf: getauscht
+          - name: Sensoren
+            entity: sensor.saugroboter_sensor_dirty_left
+            rest: sensor.saugroboter_sensor_dirty_time_left
+            reset: button.saugroboter_reset_sensor
+            knopf: gereinigt
+          - name: Räder
+            entity: sensor.saugroboter_wheel_dirty_left
+            rest: sensor.saugroboter_wheel_dirty_time_left
+            reset: button.saugroboter_reset_wheel
+            knopf: gereinigt
+          - name: Kalkschutz
+            entity: sensor.saugroboter_scale_inhibitor_left
+            rest: sensor.saugroboter_scale_inhibitor_time_left
+            reset: button.saugroboter_reset_scale_inhibitor
+            knopf: erneuert
+        - titel: Küche
+          typ: meldungen
+          gruppen:
+          - name: Kaffeevollautomat
+            lampen:
+            - name: Entkalken
+              warn: sensor.kaffeevollautomat_entkalken_in_20_tassen
+              alarm: sensor.kaffeevollautomat_entkalken_des_gerats_empfohlen
+              warn_merker: input_boolean.merker_kaffee_entkalken_bald
+              alarm_merker: input_boolean.merker_kaffee_entkalken_faellig
+            - name: Calc'n'Clean
+              warn: sensor.kaffeevollautomat_calc_n_clean_in_20_tassen
+              warn_merker: input_boolean.merker_kaffee_calc_n_clean_bald
+              alarm: sensor.kaffeevollautomat_calc_n_clean_des_gerats_empfohlen
+              alarm_merker: input_boolean.merker_kaffee_calc_n_clean_faellig
+            - name: Reinigung
+              alarm: sensor.kaffeevollautomat_geratereinigung_empfohlen
+              alarm_merker: input_boolean.merker_kaffee_reinigung_faellig
+          - name: Geschirrspüler
+            lampen:
+            - name: Salz
+              warn: sensor.geschirrspuler_salz_fast_leer
+              warn_merker: input_boolean.merker_spueler_salz_bald
+            - name: Klarspüler
+              warn: sensor.geschirrspuler_klarspuler_fast_leer
+              alarm: sensor.kuche_geschirrspuler_fehlender_klarspuler
+              warn_merker: input_boolean.merker_spueler_klarspueler_bald
+              alarm_merker: input_boolean.merker_spueler_klarspueler_fehlt
+            - name: Filter
+              warn: sensor.kuche_geschirrspuler_intelligente_erinnerung_zur_filterreinigung
+              warn_merker: input_boolean.merker_spueler_filter_reinigen
+        - titel: System
+          typ: system
+          backup_letztes: sensor.backup_letztes_erfolgreiches_automatisches_backup
+          backup_naechstes: sensor.backup_nachstes_geplantes_automatisches_backup
+          backup_max_tage: 8
+          cpu: sensor.system_monitor_prozessornutzung
+          ram: sensor.system_monitor_arbeitsspeicherauslastung
+        - titel: Neustart
+          typ: neustart
+          knoepfe:
+          - name: Router
+            entity: button.fritz_box_5590_fiber_neu_starten
+          - name: Wohnzimmer
+            entity: button.fritz_repeater_2400_neu_starten
+          - name: Yoga
+            entity: button.fritz_repeater_3000_ax_neu_starten
+          - name: Ankleide
+            entity: button.fritz_repeater_3000_ax_neu_starten_2
+          - name: System
+            aktion: hassio.host_reboot
+            text: HAOS-Host
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+- title: Wetter
+  path: wetter
+  type: panel
+  icon: mdi:weather-partly-cloudy
+  theme: ipad_panel
+  cards:
+  - type: custom:ipad-panel-layout
+    sidebar_width: 250px
+    background: /local/ipad/bg_today.jpg
+    caption_entity: sensor.bing_wallpaper
+    sidebar_background: rgba(10,14,24,0.62)
+    content_shadow: none
+    content_padding: 18px 26px 48px 26px
+    standby_after: 10
+    standby_entity: sensor.aussentemperatur_avarma_korrigiert
+    standby_label: Draußen
+    nav:
+    - name: Home
+      icon: mdi:home
+      path: home
+      info:
+      - entity: sensor.wp_raumtemperatur_mittel_eg
+        label: EG
+      - entity: sensor.raumtemperatur_mittel_og
+        label: OG
+    - name: Beleuchtung
+      icon: mdi:ceiling-light
+      path: beleuchtung
+      count_entities:
+      - light.wc
+      - light.couchtisch
+      - light.eg_bad_bad
+      - light.ankleide_decke_1_2
+      - light.licht_dusche_dusche
+      - light.licht_buro_buro
+      - light.stehlampe_buro
+      - light.licht_kuche_kuche
+      - light.kuche_arbeitsplatte
+      - light.ankleide_decke_3
+      - light.wohnzimmer
+      - light.licht_esszimmer_esszimmer
+      - light.licht_schlafzimmer_schlafzimmer
+      - light.licht_yoga_decke_yoga
+      - light.yogawand_yoga
+      - light.licht_speicher_flur
+      - light.rgbwic_string_lights
+      - light.licht_dachterrasse_dachterrasse
+      - light.licht_keller_keller
+      count_state: 'on'
+    - name: Beschattung
+      icon: mdi:blinds-horizontal
+      path: beschattung
+    - name: Haushaltsgeräte
+      icon: mdi:washing-machine
+      path: haushaltsgeraete
+      count_entities:
+      - switch.kaffeevollautomat_einschalter
+      - switch.kochfeld_einschalter
+      - switch.geschirrspuler_einschalter
+      - binary_sensor.waschmaschine_betrieb
+      - binary_sensor.trockner_betrieb
+      count_state:
+      - 'on'
+    - name: Musik
+      icon: mdi:spotify
+      path: musik
+    - name: Einkaufsliste
+      icon: mdi:cart-outline
+      path: einkaufsliste
+    - name: Auto
+      icon: mdi:car
+      path: auto
+    - name: Energie
+      icon: mdi:lightning-bolt
+      path: energie
+    - name: Heizung
+      icon: mdi:heat-pump
+      path: heizung
+      info:
+      - entity: switch.esphome_web_avarma_warmepumpe_ein_aus
+        states:
+          'on': an
+          'off': aus
+    - name: Wartung
+      icon: mdi:cog-outline
+      path: wartung
+    - name: Hauptdashboard
+      icon: mdi:home-export-outline
+      path: /lovelace
+      divider_before: true
+    nav_base: /ipad-home
+    sidebar:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; }'
+      cards:
+      - type: custom:ipad-analog-clock
+        size: 148
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 10px 6px 6px 6px !important; } h1 { font-size: 30px !important; font-weight:
+            400 !important; margin: 0 0 4px 0 !important; color: #e8eef7 !important; } p { font-size: 15px !important; color: #8a94a6 !important; margin: 0 0 9px 0 !important; } hr { border: none; border-top:
+            1px solid rgba(255,255,255,0.12); margin: 0 !important; } h1 span { font-size: 22px !important; font-weight: 300 !important; color: #8a94a6 !important; margin-left: 6px !important; }'
+        content: |
+          # Home{% set at = states('sensor.aussentemperatur_avarma_korrigiert') %}{% if is_number(at) %} <span>{{ at | float | round(1) | string | replace('.', ',') }}°</span>{% endif %}
+          {% set wd = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'][now().weekday()] %}{% set mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now().month - 1] %}{{ wd }} {{ now().day }}. {{ mo }}
+
+          ---
+    content:
+      type: vertical-stack
+      card_mod:
+        style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; }'
+      cards:
+      - type: markdown
+        card_mod:
+          style: 'ha-card { background: none !important; border: none !important; box-shadow: none !important; } ha-markdown { padding: 0 4px 10px 4px !important; } h2 { font-size: 23px !important; font-weight:
+            400 !important; color: #e8eef7 !important; margin: 0 !important; }'
+        content: |
+          ## Wetter
+      - type: grid
+        columns: 3
+        square: false
+        cards:
+        - type: custom:button-card
+          entity: sensor.gw2000a_temperature_5
+          show_name: false
+          show_icon: false
+          show_state: false
+          tap_action:
+            action: more-info
+          triggers_update:
+          - sensor.gw2000a_temperature_5
+          - weather.home
+          - sun.sun
+          - sensor.gw2000a_rain_rate_piezo
+          - sensor.gw2000a_feels_like_temperature
+          - sensor.gw2000a_humidity_5
+          variables:
+            cond: '[[[ const m = {''clear-night'':[''Klare Nacht'',''mdi:weather-night''],''cloudy'':[''Bewölkt'',''mdi:weather-cloudy''],''fog'':[''Nebel'',''mdi:weather-fog''],''hail'':[''Hagel'',''mdi:weather-hail''],''lightning'':[''Gewitter'',''mdi:weather-lightning''],''lightning-rainy'':[''Gewitter
+              mit Regen'',''mdi:weather-lightning-rainy''],''partlycloudy'':[''Teils bewölkt'',''mdi:weather-partly-cloudy''],''pouring'':[''Starkregen'',''mdi:weather-pouring''],''rainy'':[''Regen'',''mdi:weather-rainy''],''snowy'':[''Schnee'',''mdi:weather-snowy''],''snowy-rainy'':[''Schneeregen'',''mdi:weather-snowy-rainy''],''sunny'':[''Sonnig'',''mdi:weather-sunny''],''windy'':[''Windig'',''mdi:weather-windy''],''windy-variant'':[''Windig,
+              bewölkt'',''mdi:weather-windy-variant''],''exceptional'':[''Unwetter'',''mdi:alert'']}; const c = states[''weather.home''] ? states[''weather.home''].state : ''''; const r = parseFloat(states[''sensor.gw2000a_rain_rate_piezo''].state)
+              || 0; if (r > 0) return [''Es regnet · '' + r.toFixed(1).replace(''.'', '','') + '' mm/h'', ''mdi:weather-pouring'', ''rain'']; const x = m[c] || [c, ''mdi:weather-cloudy'']; return [x[0],
+              x[1], c]; ]]]'
+          custom_fields:
+            temp: '[[[ const t = parseFloat(entity.state); return isNaN(t) ? ''–'' : t.toFixed(1).replace(''.'', '','') + ''°''; ]]]'
+            cond: '[[[ return variables.cond[0]; ]]]'
+            icon: '[[[ return `<ha-icon icon="${variables.cond[1]}" style="--mdc-icon-size:54px;width:54px;height:54px;margin:0"></ha-icon>`; ]]]'
+            facts: '[[[ const f = (e, d) => { const v = parseFloat(states[e] ? states[e].state : NaN); return isNaN(v) ? ''–'' : v.toFixed(d).replace(''.'', '',''); }; const dwd = states[''weather.home'']
+              ? parseFloat(states[''weather.home''].attributes.temperature) : NaN; const g = parseFloat(entity.state); const diff = (!isNaN(dwd) && !isNaN(g)) ? (g - dwd) : NaN; const chip = (i, t) => `<span
+              style="display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.14);padding:3px 8px;border-radius:11px;white-space:nowrap"><ha-icon icon="${i}" style="--mdc-icon-size:14px;width:14px;height:14px;margin:0;flex:none"></ha-icon>${t}</span>`;
+              let s = chip(''mdi:thermometer-lines'', ''Gefühlt '' + f(''sensor.gw2000a_feels_like_temperature'', 1) + ''°'') + chip(''mdi:water-percent'', f(''sensor.gw2000a_humidity_5'', 0) + '' %'');
+              if (!isNaN(diff)) s += chip(''mdi:image-filter-hdr'', ''Tal '' + (diff >= 0 ? ''+'' : ''−'') + Math.abs(diff).toFixed(1).replace(''.'', '','') + '' K ggü. DWD''); return `<div style="display:flex;flex-wrap:wrap;gap:5px">${s}</div>`;
+              ]]]'
+            sonne: '[[[ const a = states[''sun.sun''].attributes; const r = new Date(a.next_rising), s = new Date(a.next_setting); const fmt = d => d.toLocaleTimeString(''de-DE'', {hour: ''2-digit'', minute:
+              ''2-digit''}); let len = s - r; if (len < 0) len += 86400000; const h = Math.floor(len / 3600000), m = Math.round((len % 3600000) / 60000); const ic = i => `<ha-icon icon="${i}" style="--mdc-icon-size:15px;width:15px;height:15px;margin:0;flex:none;color:#ffb703"></ha-icon>`;
+              return `<div style="display:flex;gap:12px;align-items:center;white-space:nowrap">${ic(''mdi:weather-sunset-up'')}${fmt(r)} ${ic(''mdi:weather-sunset-down'')}${fmt(s)} ${ic(''mdi:timer-sand'')}${h}
+              h ${m}</div>`; ]]]'
+          styles:
+            card:
+            - background: '[[[ const k = variables.cond[2]; const day = states[''sun.sun''].state === ''above_horizon''; const g = (a, b) => `linear-gradient(140deg, ${a} 0%, ${b} 100%)`; if ([''rain'',''rainy'',''pouring'',''lightning'',''lightning-rainy'',''hail''].includes(k))
+                return g(''rgba(90,107,128,.72)'', ''rgba(47,62,82,.72)''); if ([''snowy'',''snowy-rainy''].includes(k)) return g(''rgba(159,179,200,.72)'', ''rgba(95,120,145,.72)''); if (k === ''fog'')
+                return g(''rgba(141,153,166,.72)'', ''rgba(88,99,111,.72)''); if (!day) return g(''rgba(36,52,94,.72)'', ''rgba(13,20,40,.72)''); if ([''cloudy'',''windy-variant''].includes(k)) return g(''rgba(124,156,191,.72)'',
+                ''rgba(70,101,138,.72)''); if (k === ''partlycloudy'') return g(''rgba(90,169,230,.72)'', ''rgba(47,111,168,.72)''); return g(''rgba(76,179,255,.72)'', ''rgba(23,105,194,.72)''); ]]]'
+            - border: 1px solid rgba(255,255,255,0.10)
+            - border-radius: 18px
+            - box-shadow: none
+            - backdrop-filter: blur(10px)
+            - -webkit-backdrop-filter: blur(10px)
+            - color: '#e8eef7'
+            - padding: 12px 14px
+            - height: 178px
+            - box-sizing: border-box
+            grid:
+            - grid-template-areas: '"temp icon" "cond icon" "facts facts" "sonne sonne"'
+            - grid-template-columns: 1fr auto
+            - grid-template-rows: auto auto 1fr auto
+            custom_fields:
+              temp:
+              - justify-self: start
+              - font-size: 48px
+              - font-weight: '300'
+              - line-height: '1'
+              - letter-spacing: -1px
+              cond:
+              - justify-self: start
+              - font-size: 15px
+              - font-weight: '500'
+              - margin-top: 3px
+              icon:
+              - justify-self: end
+              - align-self: center
+              facts:
+              - justify-self: stretch
+              - align-self: center
+              - font-size: 11.5px
+              - margin-top: 8px
+              sonne:
+              - justify-self: start
+              - font-size: 12px
+              - opacity: '0.85'
+        - type: custom:button-card
+          entity: sensor.gw2000a_wind_speed
+          show_name: false
+          show_icon: false
+          show_state: false
+          tap_action:
+            action: more-info
+          triggers_update:
+          - sensor.gw2000a_wind_speed
+          - sensor.gw2000a_wind_gust
+          - sensor.gw2000a_wind_direction_10m_avg
+          - sensor.gw2000a_max_daily_gust
+          custom_fields:
+            titel: Wind
+            rose: '[[[ const dir = parseFloat(states[''sensor.gw2000a_wind_direction_10m_avg''].state) || 0; const spd = parseFloat(entity.state) || 0; let t = ''''; for (let a = 0; a < 360; a += 15) {
+              const big = a % 90 === 0, mid = a % 45 === 0; const r1 = big ? 76 : (mid ? 81 : 85); const rad = (a - 90) * Math.PI / 180; t += `<line x1="${(100 + r1 * Math.cos(rad)).toFixed(1)}" y1="${(100
+              + r1 * Math.sin(rad)).toFixed(1)}" x2="${(100 + 90 * Math.cos(rad)).toFixed(1)}" y2="${(100 + 90 * Math.sin(rad)).toFixed(1)}" stroke="currentColor" stroke-opacity="${big ? 0.9 : 0.35}" stroke-width="${big
+              ? 2.2 : 1}"/>`; } const l = [[''N'', 0], [''O'', 90], [''S'', 180], [''W'', 270]].map(([x, a]) => { const rad = (a - 90) * Math.PI / 180; return `<text x="${(100 + 62 * Math.cos(rad)).toFixed(1)}"
+              y="${(100 + 62 * Math.sin(rad) + 6).toFixed(1)}" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" fill-opacity="${x === ''N'' ? 1 : 0.7}">${x}</text>`; }).join('''');
+              const arrow = `<g transform="rotate(${dir + 180} 100 100)"><line x1="100" y1="40" x2="100" y2="160" stroke="#5aa9ff" stroke-width="3" stroke-linecap="round" stroke-opacity=".4"/><path d="M100
+              12 L113 44 L100 36 L87 44 Z" fill="#5aa9ff"/><circle cx="100" cy="166" r="6" fill="#5aa9ff" fill-opacity=".55"/></g>`; return `<svg viewBox="0 0 200 200" width="98" height="98" style="display:block"><circle
+              cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-opacity=".15"/>${t}${l}${arrow}<circle cx="100" cy="100" r="28" fill="rgba(10,14,24,.85)" stroke="currentColor" stroke-opacity=".15"/><text
+              x="100" y="104" text-anchor="middle" font-size="22" font-weight="700" fill="currentColor">${Math.round(spd)}</text><text x="100" y="119" text-anchor="middle" font-size="10" fill="currentColor"
+              fill-opacity=".6">km/h</text></svg>`; ]]]'
+            info: '[[[ const dir = parseFloat(states[''sensor.gw2000a_wind_direction_10m_avg''].state) || 0; const spd = parseFloat(entity.state) || 0; const gust = parseFloat(states[''sensor.gw2000a_wind_gust''].state)
+              || 0; const mx = parseFloat(states[''sensor.gw2000a_max_daily_gust''].state) || 0; const full = [''Nord'',''Nordnordost'',''Nordost'',''Ostnordost'',''Ost'',''Ostsüdost'',''Südost'',''Südsüdost'',''Süd'',''Südsüdwest'',''Südwest'',''Westsüdwest'',''West'',''Westnordwest'',''Nordwest'',''Nordnordwest''];
+              const n = full[Math.round(dir / 22.5) % 16]; const bft = [1, 6, 12, 20, 29, 39, 50, 62, 75, 89, 103, 118].filter(x => spd >= x).length; const bn = [''Windstille'',''Leiser Zug'',''Leichte
+              Brise'',''Schwache Brise'',''Mäßige Brise'',''Frische Brise'',''Starker Wind'',''Steifer Wind'',''Stürmischer Wind'',''Sturm'',''Schwerer Sturm'',''Orkanartiger Sturm'',''Orkan''][bft]; const
+              fmt = v => v.toFixed(1).replace(''.'', '',''); const row = (k, v) => `<div style="display:flex;justify-content:space-between;gap:6px;padding:3px 0;border-top:1px solid rgba(255,255,255,.10)"><span
+              style="opacity:.65">${k}</span><span style="font-weight:600">${v}</span></div>`; return `<div style="font-size:14px;font-weight:600;line-height:1.15;white-space:normal;overflow-wrap:anywhere">aus
+              ${n}</div><div style="font-size:11px;opacity:.7;margin:2px 0 5px;white-space:normal">${Math.round(dir)}° · Bft ${bft} · ${bn}</div>${row(''Böe'', fmt(gust))}${row(''Max heute'', fmt(mx))}<div
+              style="font-size:10px;opacity:.5;text-align:right">km/h</div>`; ]]]'
+          styles:
+            card:
+            - background: rgba(10,14,24,0.38)
+            - border: 1px solid rgba(255,255,255,0.10)
+            - border-radius: 18px
+            - box-shadow: none
+            - backdrop-filter: blur(10px)
+            - -webkit-backdrop-filter: blur(10px)
+            - color: '#e8eef7'
+            - height: 178px
+            - box-sizing: border-box
+            - padding: 10px 10px
+            grid:
+            - grid-template-areas: '"titel titel" "rose info"'
+            - grid-template-columns: 98px minmax(0,1fr)
+            - grid-template-rows: auto 1fr
+            - column-gap: 8px
+            custom_fields:
+              titel:
+              - justify-self: start
+              - font-size: 13px
+              - color: '#8a94a6'
+              - margin-bottom: 4px
+              rose:
+              - justify-self: center
+              - align-self: center
+              info:
+              - justify-self: stretch
+              - align-self: center
+              - text-align: left
+              - font-size: 12.5px
+              - min-width: '0'
+        - type: custom:button-card
+          show_name: false
+          show_icon: false
+          show_state: false
+          tap_action:
+            action: none
+          triggers_update:
+          - sensor.gw2000a_daily_rain_piezo
+          - sensor.gw2000a_weekly_rain_piezo
+          - sensor.gw2000a_monthly_rain_piezo
+          - sensor.gw2000a_yearly_rain_piezo
+          - sensor.gw2000a_rain_rate_piezo
+          custom_fields:
+            titel: '[[[ const r = parseFloat(states[''sensor.gw2000a_rain_rate_piezo''].state) || 0; return r > 0 ? `Regen <span style="color:#4cc9f0;font-weight:600">· regnet ${r.toFixed(1).replace(''.'',
+              '','')} l/m²/h</span>` : ''Regen''; ]]]'
+            box: '[[[ const f = e => { const v = parseFloat(states[e] ? states[e].state : NaN); return isNaN(v) ? ''–'' : v.toFixed(1).replace(''.'', '',''); }; const items = [[''Heute'', ''sensor.gw2000a_daily_rain_piezo''],
+              [''Woche'', ''sensor.gw2000a_weekly_rain_piezo''], [''Monat'', ''sensor.gw2000a_monthly_rain_piezo''], [''Jahr'', ''sensor.gw2000a_yearly_rain_piezo'']]; return ''<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">''
+              + items.map(([n, e]) => `<div style="background:rgba(76,201,240,.14);border-radius:10px;padding:6px 9px;text-align:left"><div style="font-size:11.5px;opacity:.7">${n}</div><div style="font-size:18px;font-weight:600;line-height:1.25">${f(e)}
+              <span style="font-size:11px;font-weight:500;opacity:.7">l/m²</span></div><div style="font-size:10px;opacity:.5">= ${f(e)} mm</div></div>`).join('''') + ''</div>''; ]]]'
+          styles:
+            card:
+            - background: rgba(10,14,24,0.38)
+            - border: 1px solid rgba(255,255,255,0.10)
+            - border-radius: 18px
+            - box-shadow: none
+            - backdrop-filter: blur(10px)
+            - -webkit-backdrop-filter: blur(10px)
+            - color: '#e8eef7'
+            - padding: 10px 12px
+            - height: 178px
+            - box-sizing: border-box
+            grid:
+            - grid-template-areas: '"titel" "box"'
+            - grid-template-rows: auto 1fr
+            custom_fields:
+              titel:
+              - justify-self: start
+              - font-size: 13px
+              - color: '#8a94a6'
+              - margin-bottom: 6px
+              box:
+              - justify-self: stretch
+              - align-self: center
+      - type: custom:statistics-graph-chart-card
+        card_header: Temperatur · 48 h
+        card_header_size: 13px
+        hours_to_show: 48
+        height: 112
+        show_legend: true
+        card_background_color: rgba(10,14,24,0.38)
+        card_padding: 10px 12px 6px 12px
+        x_axis_color: '#8a94a6'
+        y_axis_color: '#8a94a6'
+        y_grid_color: rgba(255,255,255,0.07)
+        entities:
+        - entity: sensor.gw2000a_temperature_5
+          name: Garten
+          color: '#ff8c42'
+          decimals: 1
+          show_state: false
+        - entity: sensor.gw2000a_outdoor_temperature
+          name: WS90 (frei)
+          color: '#ffd166'
+          show_fill: false
+          line_width: 1.5
+          decimals: 1
+          show_state: false
+        - entity: sensor.gw2000a_dewpoint_5
+          name: Taupunkt
+          color: '#4cc9f0'
+          show_fill: false
+          line_width: 1.5
+          decimals: 1
+          show_state: false
+        points_per_hour: 2
+        y_axis_ticks: 4
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+        - type: custom:statistics-graph-chart-card
+          card_header: Wind & Böen · 24 h
+          card_header_size: 13px
+          hours_to_show: 24
+          height: 88
+          show_legend: true
+          card_background_color: rgba(10,14,24,0.38)
+          card_padding: 10px 12px 6px 12px
+          x_axis_color: '#8a94a6'
+          y_axis_color: '#8a94a6'
+          y_grid_color: rgba(255,255,255,0.07)
+          entities:
+          - entity: sensor.gw2000a_wind_speed
+            name: Wind
+            color: '#3a86ff'
+            decimals: 1
+            show_state: false
+          - entity: sensor.gw2000a_wind_gust
+            name: Böe
+            color: '#b388ff'
+            aggregate_func: max
+            show_fill: false
+            line_width: 1.5
+            decimals: 1
+            show_state: false
+          points_per_hour: 4
+          y_axis_ticks: 3
+        - type: custom:statistics-graph-chart-card
+          card_header: Luftdruck · 3 Tage
+          card_header_size: 13px
+          hours_to_show: 72
+          height: 88
+          show_legend: true
+          card_background_color: rgba(10,14,24,0.38)
+          card_padding: 10px 12px 6px 12px
+          x_axis_color: '#8a94a6'
+          y_axis_color: '#8a94a6'
+          y_grid_color: rgba(255,255,255,0.07)
+          entities:
+          - entity: sensor.gw2000a_relative_pressure
+            name: Luftdruck
+            color: '#b388ff'
+            decimals: 1
+            show_state: false
+          points_per_hour: 1
+          y_axis_ticks: 3
+kiosk_mode:
+  user_settings:
+  - users:
+    - ipad
+    hide_header: true
+    hide_sidebar: true
+  ignore_mobile_settings: true
+button_card_templates:
+  akku_kachel:
+    show_name: false
+    show_icon: false
+    show_state: false
+    tap_action:
+      action: more-info
+    hold_action:
+      action: more-info
+    styles:
+      card:
+      - background: rgba(12,17,27,0.62)
+      - border: 1px solid rgba(255,255,255,0.09)
+      - border-radius: 10px
+      - box-shadow: none
+      - padding: 6px 8px 7px 8px
+      grid:
+      - grid-template-areas: '"inhalt"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: auto
+      custom_fields:
+        inhalt:
+        - justify-self: stretch
+        - line-height: normal
+    custom_fields:
+      inhalt: '[[[ const v = variables || {}; const st = entity ? entity.state : ''unavailable''; const p = v.stufen ? (st in v.stufen ? v.stufen[st] : NaN) : (v.spannung ? (parseFloat(st) - v.spannung.leer)
+        / (v.spannung.voll - v.spannung.leer) * 100 : parseFloat(st)); const le = v.laden_entity ? states[v.laden_entity] : null; const laedt = !!le && (v.laden_zustaende || [''on'', ''charging'', ''Charging'',
+        ''CHARGINGACTIVE'']).includes(le.state); const text = isNaN(p) ? ''–'' : (v.stufen ? ((v.stufen_text || {})[st] || st) : (v.spannung ? parseFloat(st).toFixed(2).replace(''.'', '','') + '' V'' :
+        Math.round(p) + '' %'')); const farbe = isNaN(p) ? ''#8a94a6'' : ''hsl('' + Math.round(Math.max(0, Math.min(p, 100)) / 100 * 120) + '',70%,56%)''; const blitz = laedt ? ''<ha-icon icon="mdi:lightning-bolt"
+        style="--mdc-icon-size:11px;color:#f5b700;margin-right:1px;vertical-align:-2px"></ha-icon>'' : ''''; const an = isNaN(p) || p <= 0 ? 0 : Math.min(10, Math.max(1, Math.round(p / 10))); const b =
+        (166 - 9 * 3) / 10; let seg = ''''; for (let i = 0; i < 10; i++) { const x = (6 + i * (b + 3)).toFixed(1); const f = ''hsl('' + Math.round(i / 9 * 120) + '',72%,50%)''; const r = ''<rect x="'' +
+        x + ''" y="6" width="'' + b.toFixed(1) + ''" height="32" rx="2.5" fill="''; if (i < an) seg += r + f + ''"/>''; else if (laedt && i === an) seg += r + f + ''"><animate attributeName="opacity" values="0.12;0.9;0.12"
+        dur="1.8s" repeatCount="indefinite"/></rect>''; else seg += r + ''rgba(255,255,255,0.07)"/>''; } const svg = ''<svg viewBox="0 0 188 44" width="100%" style="display:block" role="img" aria-label="''
+        + v.name + '' '' + text + ''"><rect x="1" y="1" width="176" height="42" rx="7" fill="rgba(0,0,0,0.25)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/><rect x="179" y="13" width="8" height="18"
+        rx="2" fill="rgba(255,255,255,0.35)"/>'' + seg + ''</svg>''; return ''<div style="display:flex;flex-direction:column;gap:4px;width:100%"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px"><span
+        style="font-size:10px;color:#8a94a6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'' + v.name + (v.zusatz && states[v.zusatz.entity] && !isNaN(parseFloat(states[v.zusatz.entity].state))
+        ? '' <ha-icon icon="'' + (v.zusatz.icon || ''mdi:white-balance-sunny'') + ''" style="--mdc-icon-size:10px;color:#f5b700;vertical-align:-1px"></ha-icon>'' + parseFloat(states[v.zusatz.entity].state).toFixed(1).replace(''.'',
+        '','') + (v.zusatz.einheit ? '' '' + v.zusatz.einheit : '''') : '''') + ''</span><span style="font-size:12px;font-weight:500;color:'' + farbe + '';white-space:nowrap">'' + blitz + text + ''</span></div>''
+        + svg + ''</div>''; ]]]'
