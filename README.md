@@ -42,6 +42,18 @@ Die Heizungsansicht und ihre drei Karten passen zu einer Hofman-Avarma-Wärmepum
 eigener Regelung, siehe [avarma-eigenbau-regelung](https://github.com/holle74/avarma-eigenbau-regelung).
 Für andere Anlagen dient sie nur als Anschauungsbeispiel.
 
+Die Wärmepumpen-Entities in dieser Ansicht heißen so, wie Home Assistant sie hier aus Gerätename
+und Bereich gebildet hat (`esphome_web_avarma_…`, `controllroom_esphome_web_avarma_…`,
+`esphome_web_f34aa0_…`). Bei anderem Gerätenamen oder Bereich lassen sie sich in einem Rutsch
+ersetzen, Erklärung und Befehl stehen im Abschnitt
+[Eigene Gerätenamen und Bereiche](https://github.com/holle74/avarma-eigenbau-regelung#eigene-gerätenamen-und-bereiche)
+der Regelung. Für dieses Repo lautet der Befehl:
+
+```bash
+sed -i -E 's/\bcontrollroom_esphome_web_avarma_/meine_wp_/g; s/\besphome_web_avarma_/meine_wp_/g; s/\besphome_web_f34aa0_/meine_wp_/g' \
+  dashboard/ipad-home.yaml
+```
+
 ## Voraussetzungen
 
 Über HACS:
